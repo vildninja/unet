@@ -1,10 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.Networking;
 
 
 namespace VildNinja.Net
 {
+    public enum FightResult
+    {
+        Victory,
+        Defeat,
+        Draw,
+        Dropped
+    }
+
+    public enum GameStatus
+    {
+        Disconnected,
+        Connected,
+        Fighting
+    }
+
     public struct Client : IEquatable<Client>
     {
         public int host;
@@ -55,5 +71,10 @@ namespace VildNinja.Net
         {
             Debug.Log(line);
         }
+    }
+
+    public static class Util
+    {
+        
     }
 }

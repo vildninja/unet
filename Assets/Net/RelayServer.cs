@@ -86,7 +86,7 @@ namespace VildNinja.Net
                         }
                         else if (channel == gameChannel)
                         {
-                            Relay(client);
+                            Relay(client, size);
                         }
                         break;
                     case NetworkEventType.ConnectEvent:
@@ -167,6 +167,7 @@ namespace VildNinja.Net
             stream.Position = 0;
             writer.Write("fight");
             writer.Write(clients[b]);
+            writer.Write((byte)3);
             writer.Write((byte)map.Length);
             writer.Write(map);
             SendMessage(a, true);
@@ -175,6 +176,7 @@ namespace VildNinja.Net
             stream.Position = 0;
             writer.Write("fight");
             writer.Write(clients[a]);
+            writer.Write((byte)map.Length - 4);
             writer.Write((byte)map.Length);
             writer.Write(map);
             SendMessage(b, true);
@@ -220,12 +222,39 @@ namespace VildNinja.Net
 
         private void MatchWon(Client client)
         {
-            
+            Client other;
+            if (matches.TryGetValue(client, out other))
+            {
+                stream.Position = 0;
+                writer.Write("victory");
+                SendMessage(client, true);
+                stream.Position = 0;
+                writer.Write("defeat");
+                SendMessage(other, true);
+
+                matches.Remove(client);
+                matches.Remove(other);
+
+                Log.Line("Match over " + client + " won over " + other);
+            }
         }
 
-        private void Relay(Client from)
+        private void Relay(Client client, int length)
         {
-            
+            Client other;
+            if (matches.TryGetValue(client, out other))
+            {
+                stream.Position = length;
+                SendMessage(other, false);
+            }
+            else
+            {
+                stream.Position = 0;
+                writer.Write("dropped");
+                SendMessage(client, true);
+
+                Log.Line("Match dropped " + client);
+            }
         }
     }
 }
