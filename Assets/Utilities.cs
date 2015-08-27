@@ -32,7 +32,7 @@ namespace VildNinja.Net
 
         public override int GetHashCode()
         {
-            return host * 9901 + client * 331;
+            return host * 9901 + conn * 331;
         }
 
         public override string ToString()
