@@ -168,6 +168,7 @@ namespace VildNinja.Net
             writer.Write("fight");
             writer.Write(clients[b]);
             writer.Write((byte)3);
+            writer.Write((byte)(map.Length - 4));
             writer.Write((byte)map.Length);
             writer.Write(map);
             SendMessage(a, true);
@@ -176,7 +177,8 @@ namespace VildNinja.Net
             stream.Position = 0;
             writer.Write("fight");
             writer.Write(clients[a]);
-            writer.Write((byte)map.Length - 4);
+            writer.Write((byte)(map.Length - 4));
+            writer.Write((byte)3);
             writer.Write((byte)map.Length);
             writer.Write(map);
             SendMessage(b, true);

@@ -51,6 +51,13 @@ namespace VildNinja.Game
             net.OnGameDataReceived += ReceiveGameData;
 
             net.Connect(ip);
+
+            //var map = new byte[32];
+            //for (int i = 0; i < map.Length; i++)
+            //{
+            //    map[i] = (byte)UnityEngine.Random.Range(3, 8);
+            //}
+            //StartMatch("my", 3, map);
         }
 
         private void ShowPanel(string panel)
@@ -64,10 +71,10 @@ namespace VildNinja.Game
         private float syncTimer = 0;
         void Update()
         {
+            net.Poll();
+
             if (net.IsConnected)
             {
-                net.Poll();
-
                 syncTimer -= Time.deltaTime;
                 if (syncTimer < 0 || changes.Count > 0)
                 {
@@ -102,7 +109,7 @@ namespace VildNinja.Game
             ShowPanel("LostConnection");
         }
 
-        private void StartMatch(string opponent, byte position, byte[] map)
+        private void StartMatch(string opponent, byte position, byte otherPosition, byte[] map)
         {
             other.name = opponent;
 
@@ -123,7 +130,7 @@ namespace VildNinja.Game
                 grid = null;
             }
 
-            Vector2 lowerLeft = new Vector2(map.Length / 2f, 0);
+            Vector2 lowerLeft = new Vector2(-map.Length / 2f + 0.5f, 0);
             grid = new Brick[map.Length, 16];
 
             for (int x = 0; x < map.Length; x++)
@@ -141,7 +148,7 @@ namespace VildNinja.Game
 
 
             me.position = lowerLeft + new Vector2(position, map[position] + 1);
-            other.position = lowerLeft + new Vector2(map.Length - position - 1, map[map.Length - position - 1] + 1);
+            other.position = lowerLeft + new Vector2(otherPosition, map[otherPosition] + 1);
 
             me.isKinematic = false;
             other.isKinematic = false;

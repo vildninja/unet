@@ -30,7 +30,7 @@ namespace VildNinja.Net
 
         public event Action OnConnected = delegate { };
         public event Action OnDisconnected = delegate { };
-        public event Action<string, byte, byte[]> OnMatchStarted = delegate {  };
+        public event Action<string, byte, byte, byte[]> OnMatchStarted = delegate {  };
         public event Action<BinaryReader> OnGameDataReceived = delegate { };
         public event Action<FightResult> OnMatchEnded = delegate { };
 
@@ -76,6 +76,9 @@ namespace VildNinja.Net
 
         public void Poll()
         {
+            if (!NetworkTransport.IsStarted)
+                return;
+
             for (int i = 0; i < 100; i++)
             {
                 Client client;
@@ -150,9 +153,10 @@ namespace VildNinja.Net
                 case "fight":
                     string opponent = reader.ReadString();
                     byte position = reader.ReadByte();
+                    byte otherPosition = reader.ReadByte();
                     byte length = reader.ReadByte();
                     byte[] map = reader.ReadBytes(length);
-                    OnMatchStarted(opponent, position, map);
+                    OnMatchStarted(opponent, position, otherPosition, map);
                     inMatch = true;
                     break;
             }
